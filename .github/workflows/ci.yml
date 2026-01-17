@@ -16,7 +16,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src/PlaywrightDemo.csproj
     - name: Install Playwright Browsers
-      run: pwsh src/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      run: pwsh -File src/bin/Debug/net8.0/playwright.ps1 install --with-deps
     - name: Build
       run: dotnet build src/PlaywrightDemo.csproj --no-restore
     - name: Test
