@@ -28,18 +28,17 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src/PlaywrightDemo.csproj
 
-    - name: Build
-      run: dotnet build src/PlaywrightDemo.csproj --no-restore
-
-    - name: Cache Playwright Browsers
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/ms-playwright
-        key: ${{ runner.os }}-playwright-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: ${{ runner.os }}-playwright-
-
     - name: Install Playwright Browsers
       run: pwsh src/bin/Debug/net8.0/playwright.ps1 install --with-deps
 
+    - name: Build
+      run: dotnet build src/PlaywrightDemo.csproj --no-restore
+
     - name: Test
       run: dotnet test src/PlaywrightDemo.csproj --no-build --verbosity normal
+
+    - name: Build Docker Image
+      run: docker build -t playwright-csharp-demo .
+
+    - name: Test in Docker
+      run: docker run playwright-csharp-demo
