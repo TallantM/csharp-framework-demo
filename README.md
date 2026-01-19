@@ -1,4 +1,4 @@
-# Playwright C# Demo
+# Playwright C# Demo [![CI](https://github.com/TallantM/playwright-csharp-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/TallantM/playwright-csharp-demo/actions/workflows/ci.yml)
 A client project demonstration of automated testing using Playwright with C#/.NET, featuring reusable utilities, end-to-end test suites, and a GitHub Actions CI workflow for scalable quality assurance.
 ## Prerequisites
 - .NET SDK 8.0+
