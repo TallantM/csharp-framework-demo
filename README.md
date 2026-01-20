@@ -1,6 +1,6 @@
 # C# Framework Demo [![CI](https://github.com/TallantM/playwright-csharp-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/TallantM/playwright-csharp-demo/actions/workflows/ci.yml)
 
-A client project demonstration showcasing automated testing in C#/.NET, incorporating tools like Playwright for browser automation, reusable utilities, layered test suites (unit, integration, and end-to-end), and a GitHub Actions CI workflow with Docker containerization for reliable quality assurance. This repository highlights proficiency in C# through structured and maintainable testing practices, making it well-suited for job applications or client presentations.
+A client project demonstration showcasing automated testing in C#/.NET, incorporating tools like Playwright for browser automation, reusable utilities, layered test suites (unit, integration, and end-to-end), and a GitHub Actions CI workflow with Docker containerization for reliable quality assurance.
 
 ## Prerequisites
 - .NET SDK 8.0+
