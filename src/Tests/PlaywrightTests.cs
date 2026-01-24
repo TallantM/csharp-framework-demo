@@ -8,12 +8,12 @@ namespace csharp_framework_demo.Tests;
 
 [AllureSuite("End-to-End Tests")]
 [AllureFeature("Authentication")]
-public class ExampleTests : IClassFixture<PlaywrightFixture>
+public class UserWorkflowTests : IClassFixture<PlaywrightFixture>
 {
     private readonly IPage _page;
     private readonly LoginPage _loginPage;
 
-    public ExampleTests(PlaywrightFixture fixture)
+    public UserWorkflowTests(PlaywrightFixture fixture)
     {
         _page = fixture.Page;
         _loginPage = new LoginPage(_page);
