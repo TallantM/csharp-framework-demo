@@ -58,7 +58,9 @@ jobs:
 
     - name: Generate Allure Report
       if: always()
-      run: allure generate allure-results --clean -o allure-report
+      run: |
+        rm -rf allure-report
+        allure generate allure-results -o allure-report
 
     - name: Upload Allure Report as Artifact
       if: always()
