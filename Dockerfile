@@ -12,6 +12,9 @@ COPY src/ ./src/
 RUN dotnet build src/csharp_framework_demo.csproj -c Release
 RUN dotnet publish src/csharp_framework_demo.csproj -c Release -o out
 
+# Copy allureConfig.json to output directory
+COPY src/allureConfig.json ./out/
+
 # Set the final working directory
 WORKDIR /app/out
 
