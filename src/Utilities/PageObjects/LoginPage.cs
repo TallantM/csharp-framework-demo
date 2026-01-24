@@ -1,5 +1,5 @@
 using Microsoft.Playwright;
-namespace PlaywrightDemo.Utilities.PageObjects;
+namespace csharp_framework_demo.Utilities.PageObjects;
 public class LoginPage
 {
     private readonly IPage _page;

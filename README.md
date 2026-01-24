@@ -1,4 +1,4 @@
-# C# Framework Demo [![CI](https://github.com/TallantM/playwright-csharp-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/TallantM/playwright-csharp-demo/actions/workflows/ci.yml)
+# C# Framework Demo [![CI](https://github.com/TallantM/csharp-framework-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/TallantM/csharp-framework-demo/actions/workflows/ci.yml)
 
 A client project demonstration showcasing automated testing in C#/.NET, incorporating tools like Playwright for browser automation, reusable utilities, layered test suites (unit, integration, and end-to-end), and a GitHub Actions CI workflow with Docker containerization for reliable quality assurance.
 
@@ -16,7 +16,7 @@ Verify prerequisites:
 - Docker: `docker --version` (ensure Docker is running with `docker info`)
 
 ## Setup
-1. Clone the repo: `git clone https://github.com/TallantM/playwright-csharp-demo.git`
+1. Clone the repo: `git clone https://github.com/TallantM/csharp-framework-demo.git`
 2. Navigate to src: `cd src`
 3. Restore packages: `dotnet restore`
 4. Build the project: `dotnet build` (optional, verifies compilation)
@@ -28,12 +28,12 @@ For Docker setup (if not installed):
 
 ## Folder Structure
 ```text
-playwright-csharp-demo/
+csharp-framework-demo/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml          # GitHub Actions CI workflow
 ├── src/
-│   ├── PlaywrightDemo.csproj  # Project file with dependencies
+│   ├── csharp_framework_demo.csproj  # Project file with dependencies
 │   ├── Tests/
 │   │   └── ExampleTests.cs    # End-to-end tests
 │   │   └── LoginPageUnitTests.cs  # Unit tests with mocking
@@ -44,7 +44,7 @@ playwright-csharp-demo/
 ├── .gitignore                # Ignores .NET and Playwright artifacts
 ├── Dockerfile                # Containerized build for testing
 ├── README.md                 # This documentation
-└── PlaywrightDemo.sln        # Solution file
+└── csharp_framework_demo.sln        # Solution file
 ```
 
 ## Testing Overview
@@ -58,13 +58,13 @@ For rapid development, run tests directly on your host (requires host browser in
 ```bash
 cd src
 playwright install  # Install browsers on host
-dotnet test PlaywrightDemo.csproj
+dotnet test 
 ```
 
 For consistency with CI, use Docker (recommended before pushing):
 ```bash
-docker build -t playwright-csharp-demo .
-docker run playwright-csharp-demo
+docker build -t csharp_framework_demo .
+docker run csharp_framework_demo
 ```
 
 ## CI/CD

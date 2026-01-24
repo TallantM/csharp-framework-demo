@@ -2,15 +2,23 @@ FROM mcr.microsoft.com/playwright/dotnet:v1.57.0-jammy
 
 WORKDIR /app
 
-# Copy csproj and restore dependencies
+# Copy project files
 COPY src/*.csproj ./src/
-RUN dotnet restore src/PlaywrightDemo.csproj
+COPY src/allureConfig.json ./src/
 
-# Copy source and publish
+# Restore dependencies
+RUN dotnet restore src/csharp_framework_demo.csproj
+
+# Copy everything else
 COPY src/ ./src/
-RUN dotnet publish src/PlaywrightDemo.csproj -c Release -o out
 
-# Set the final working directory
-WORKDIR /app/out
+# Build the project
+RUN dotnet build src/csharp_framework_demo.csproj -c Release
 
-ENTRYPOINT ["dotnet", "test", "PlaywrightDemo.dll"]
+# Install Playwright browsers
+# RUN dotnet tool install --global Microsoft.Playwright.CLI
+# ENV PATH="${PATH}:/root/.dotnet/tools"
+
+
+# Run tests and generate allure results
+CMD ["dotnet", "test", "src/csharp_framework_demo.csproj", "-c", "Release", "--logger", "console;verbosity=detailed"]

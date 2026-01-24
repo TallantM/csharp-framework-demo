@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlaywrightDemo", "src\PlaywrightDemo.csproj", "{D83115CA-9CFF-47FD-BAAB-1EE0E2CC5EA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csharp_framework_demo", "src\csharp_framework_demo.csproj", "{D83115CA-9CFF-47FD-BAAB-1EE0E2CC5EA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

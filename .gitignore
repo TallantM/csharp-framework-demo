@@ -18,3 +18,12 @@ playwright/.cache/
 # Misc
 .DS_Store
 Thumbs.db
+
+# Allure
+allure-results/
+allure-report/
+.allure/
+
+# Node
+node_modules/
+package-lock.json

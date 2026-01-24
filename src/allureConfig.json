@@ -1,0 +1,9 @@
+{
+  "allure": {
+    "directory": "allure-results",
+    "title": "C# Framework Demo Test Results",
+    "links": [
+      "https://github.com/TallantM/csharp_framework_demo/issues/{issue}"
+    ]
+  }
+}
