@@ -6,64 +6,94 @@ on:
   pull_request:
     branches: [ main ]
 
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+# Sets permissions for GitHub Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+    - name: Setup Node.js (for Allure)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
 
-      - name: Install Allure CLI
-        run: npm install -g allure-commandline
+    - name: Cache NuGet Packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: ${{ runner.os }}-nuget-
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: ${{ runner.os }}-nuget-
+    - name: Restore dependencies
+      run: dotnet restore src/csharp_framework_demo.csproj
 
-      - name: Restore dependencies
-        run: dotnet restore src/csharp_framework_demo.csproj
+    - name: Build
+      run: dotnet build src/csharp_framework_demo.csproj --no-restore
 
-      - name: Build
-        run: dotnet build src/csharp_framework_demo.csproj --no-restore
+    - name: Install Allure CLI
+      run: npm install -g allure
 
-      - name: Build Docker image
-        run: docker build -t csharp_framework_demo .
+    - name: Build Docker Image
+      run: docker build -t csharp-framework-demo .
 
-      - name: Run tests in Docker
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}/allure-results:/allure-results \
-            csharp_framework_demo
+    - name: Test in Docker
+      run: docker run -v ${{ github.workspace }}/allure-results:/app/out/allure-results csharp-framework-demo
 
-      - name: Generate Allure report
-        if: always()
-        run: allure generate allure-results --clean -o allure-report
+    - name: Generate Allure Report
+      if: always()
+      run: allure generate allure-results --clean -o allure-report
 
-      - name: Upload Allure report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report
-          path: allure-report
-          retention-days: 30
+    - name: Upload Allure Report as Artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report
+        path: allure-report
+        retention-days: 30
 
-      - name: Upload Allure results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: allure-results/
-          retention-days: 30
+    - name: Upload Allure Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-results
+        path: allure-results
+        retention-days: 30
+
+    # Upload artifact for GitHub Pages
+    - name: Upload Pages Artifact
+      if: always() && github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: allure-report
+
+  # Deploy to GitHub Pages (only on main branch)
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
