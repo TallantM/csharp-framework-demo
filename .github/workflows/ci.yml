@@ -83,7 +83,7 @@ jobs:
 
     # Upload artifact for GitHub Pages
     - name: Upload Pages Artifact
-      if: always() && github.ref == 'refs/heads/main'
+      if: always() && github.ref == 'refs/heads/main' && github.run_attempt == 1
       uses: actions/upload-pages-artifact@v3
       with:
         path: allure-report
