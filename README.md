@@ -49,7 +49,6 @@ csharp-framework-demo/
 ```
 
 ## Testing Overview
-This repository demonstrates layered testing to highlight automated testing skills:
 - **Unit Tests**: Isolated verification of utilities (e.g., `LoginPageUnitTests.cs`) using Moq for mocking dependencies, ensuring fast and deterministic checks without browser overhead.
 - **Integration Tests**: Validation of component interactions (e.g., `LoginPageIntegrationTests.cs`) in a simulated browser context.
 - **E2E Tests**: Full browser automation (e.g., `ExampleTests.cs`) for login scenarios on saucedemo.com, showcasing Playwright's capabilities.
