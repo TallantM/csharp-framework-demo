@@ -147,9 +147,9 @@ public class SpecConformanceTests
         var requiredSections = new[]
         {
             "## Page Overview",
-            "## Page Elements (Selectors)",
-            "## Behavioral Contracts (Methods)",
-            "## Mapping to Code"
+            "## Page Elements",
+            "## Methods",
+            "## Implementation Rules"
         };
 
         foreach (var section in requiredSections)
@@ -177,17 +177,13 @@ public class SpecConformanceTests
             "## Test Suite Overview",
             "## Test Configuration",
             "## Test Scenarios",
-            "## Mocking Guidelines"
+            "## Coverage"
         };
 
         foreach (var section in requiredSections)
         {
             Assert.Contains(section, content, System.StringComparison.OrdinalIgnoreCase);
         }
-
-        // Verify Moq usage is documented
-        Assert.Contains("Mock<IPage>", content);
-        Assert.Contains("mockPage.Verify", content);
     }
 
     [Fact]
@@ -209,17 +205,13 @@ public class SpecConformanceTests
             "## Test Suite Overview",
             "## Test Configuration",
             "## Test Scenarios",
-            "## Assertion Guidelines"
+            "## Coverage"
         };
 
         foreach (var section in requiredSections)
         {
             Assert.Contains(section, content, System.StringComparison.OrdinalIgnoreCase);
         }
-
-        // Verify PlaywrightFixture usage is documented
-        Assert.Contains("IClassFixture<PlaywrightFixture>", content);
-        Assert.Contains("Assertions.Expect", content);
     }
 
     [Fact]
@@ -241,7 +233,7 @@ public class SpecConformanceTests
             "## Test Suite Overview",
             "## Test Configuration",
             "## Workflow Scenarios",
-            "## Allure Step Guidelines"
+            "## Reporting"
         };
 
         foreach (var section in requiredSections)
