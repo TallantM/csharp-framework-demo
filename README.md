@@ -70,6 +70,72 @@ docker run csharp_framework_demo
 ## CI/CD
 GitHub Actions workflow in `.github/workflows/ci.yml` builds the Docker image and runs tests exclusively in the container on push/pull requests, ensuring environmental consistency across machines.
 
+## Spec-Driven Development
+
+This project uses **Spec-Driven Development (SDD)** where specifications guide implementation:
+
+### What is SDD?
+
+1. **Specifications** - Written in `specs/` directory define expected behavior before code
+2. **AI Code Generation** - AI agents (like Claude Code) generate initial code from specs
+3. **Human Approval** - Developers review, refine, and approve generated code
+4. **Synchronized Maintenance** - Both specs and code are maintained together
+5. **Conformance Testing** - Automated tests validate spec-code alignment
+
+### Spec Directory Structure
+
+```
+specs/
+├── META-FRAMEWORK.md          # SDD process definition and workflow
+├── PROJECT-SPEC.md            # Framework architecture and standards
+├── templates/                 # Spec templates for new features
+│   ├── page-objects.template.md
+│   ├── unit-tests.template.md
+│   ├── integration-tests.template.md
+│   └── workflows.template.md
+└── features/                  # Feature specifications (added as features are developed)
+    └── authentication/        # Example feature (future)
+        ├── page-objects.md
+        ├── unit-tests.md
+        ├── integration-tests.md
+        └── workflows.md
+```
+
+### Getting Started with SDD
+
+**Read the Specifications:**
+- [`specs/META-FRAMEWORK.md`](specs/META-FRAMEWORK.md) - Understand the SDD workflow and process
+- [`specs/PROJECT-SPEC.md`](specs/PROJECT-SPEC.md) - Learn the architectural constraints and standards
+
+**Creating New Features (Spec-First):**
+1. Copy templates from `specs/templates/` to `specs/features/{feature-name}/`
+2. Fill out the spec templates with feature details
+3. Ask AI (Claude Code) to generate code from specs
+4. Review and refine generated code
+5. Update specs if code refinements differ from original spec
+6. Run conformance tests: `dotnet test --filter "FullyQualifiedName~SpecConformanceTests"`
+7. Commit both specs and code together
+
+**Modifying Existing Features:**
+- If changing code → Update corresponding spec
+- If changing spec → Update or regenerate code
+- Always keep specs and code synchronized
+- Conformance tests validate alignment
+
+### Conformance Testing
+
+Run conformance tests to validate spec-code alignment:
+```bash
+cd src
+dotnet test --filter "FullyQualifiedName~SpecConformanceTests"
+```
+
+These meta-tests ensure:
+- All spec files exist and are well-formed
+- Spec templates are available
+- SpecValidation utilities are present
+- (Future) Generated code matches specs
+
 ## Troubleshooting
 - **Browser Launch Failures**: Ensure `playwright install` has run successfully. If using Docker, verify all dependencies are included in the Dockerfile.
 - **Dependency Errors**: Run `dotnet restore` to refresh packages. For Docker builds, check for network issues during library installations.

@@ -82,6 +82,13 @@ jobs:
         retention-days: 30
 
     # Upload artifact for GitHub Pages
+    - name: Run Conformance Tests
+      if: always()
+      run: |
+        dotnet test src/csharp_framework_demo.csproj \
+          --filter "FullyQualifiedName~SpecConformanceTests" \
+          --logger "console;verbosity=detailed"
+
     - name: Upload Pages Artifact
       if: always() && github.ref == 'refs/heads/main' && github.run_attempt == 1
       uses: actions/upload-pages-artifact@v3
