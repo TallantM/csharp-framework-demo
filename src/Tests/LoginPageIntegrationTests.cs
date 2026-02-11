@@ -10,13 +10,11 @@ namespace csharp_framework_demo.Tests;
 [AllureFeature("Login Page Object")]
 public class LoginPageIntegrationTests : IClassFixture<PlaywrightFixture>
 {
-    private readonly IPage _page;
-    private readonly LoginPage _loginPage;
+    private readonly PlaywrightFixture _fixture;
 
     public LoginPageIntegrationTests(PlaywrightFixture fixture)
     {
-        _page = fixture.Page;
-        _loginPage = new LoginPage(_page);
+        _fixture = fixture;
     }
 
     [Fact]
@@ -26,24 +24,28 @@ public class LoginPageIntegrationTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "Login")]
     public async Task LoginAsync_IntegratesWithPageAndNavigatesSuccessfully()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+
         await AllureApi.Step("Navigate to SauceDemo login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Perform login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         AllureApi.Step("Verify URL changed to inventory page", () =>
         {
-            Assert.Equal("https://www.saucedemo.com/inventory.html", _page.Url);
+            Assert.Equal("https://www.saucedemo.com/inventory.html", page.Url);
         });
 
         await AllureApi.Step("Verify inventory container is visible on page", async () =>
         {
-            var inventoryVisible = await _page.IsVisibleAsync(".inventory_container");
+            var inventoryVisible = await page.IsVisibleAsync(".inventory_container");
             Assert.True(inventoryVisible);
         });
     }
@@ -55,19 +57,23 @@ public class LoginPageIntegrationTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "Validation", "Negative")]
     public async Task LoginAsync_HandlesInvalidCredentialsAndDisplaysError()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+
         await AllureApi.Step("Navigate to SauceDemo login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Attempt login with invalid credentials", async () =>
         {
-            await _loginPage.LoginAsync("invalid_user", "wrong_password");
+            await loginPage.LoginAsync("invalid_user", "wrong_password");
         });
 
         await AllureApi.Step("Verify error message is displayed", async () =>
         {
-            var errorVisible = await _page.IsVisibleAsync("[data-test='error']");
+            var errorVisible = await page.IsVisibleAsync("[data-test='error']");
             Assert.True(errorVisible);
         });
     }

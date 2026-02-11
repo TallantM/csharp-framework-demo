@@ -10,21 +10,11 @@ namespace csharp_framework_demo.Tests;
 [AllureFeature("Burger Menu Page Object")]
 public class BurgerMenuTests : IClassFixture<PlaywrightFixture>
 {
-    private readonly IPage _page;
-    private readonly LoginPage _loginPage;
-    private readonly BurgerMenuPage _burgerMenuPage;
+    private readonly PlaywrightFixture _fixture;
 
     public BurgerMenuTests(PlaywrightFixture fixture)
     {
-        _page = fixture.Page;
-        _loginPage = new LoginPage(_page);
-        _burgerMenuPage = new BurgerMenuPage(_page);
-    }
-
-    private async Task LoginAsync()
-    {
-        await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
-        await _loginPage.LoginAsync("standard_user", "secret_sauce");
+        _fixture = fixture;
     }
 
     [Fact]
@@ -34,16 +24,25 @@ public class BurgerMenuTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "BurgerMenu")]
     public async Task OpenMenu_OpensMenuSuccessfully()
     {
-        await AllureApi.Step("Login to application", async () => await LoginAsync());
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+
+        await AllureApi.Step("Login to application", async () =>
+        {
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
+        });
 
         await AllureApi.Step("Open burger menu", async () =>
         {
-            await _burgerMenuPage.OpenMenuAsync();
+            await burgerMenuPage.OpenMenuAsync();
         });
 
         await AllureApi.Step("Verify menu is open", async () =>
         {
-            var isOpen = await _burgerMenuPage.IsMenuOpenAsync();
+            var isOpen = await burgerMenuPage.IsMenuOpenAsync();
             Assert.True(isOpen);
         });
     }
@@ -55,20 +54,26 @@ public class BurgerMenuTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "BurgerMenu")]
     public async Task CloseMenu_ClosesMenuSuccessfully()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+
         await AllureApi.Step("Login and open menu", async () =>
         {
-            await LoginAsync();
-            await _burgerMenuPage.OpenMenuAsync();
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
+            await burgerMenuPage.OpenMenuAsync();
         });
 
         await AllureApi.Step("Close burger menu", async () =>
         {
-            await _burgerMenuPage.CloseMenuAsync();
+            await burgerMenuPage.CloseMenuAsync();
         });
 
         await AllureApi.Step("Verify menu is closed", async () =>
         {
-            var isOpen = await _burgerMenuPage.IsMenuOpenAsync();
+            var isOpen = await burgerMenuPage.IsMenuOpenAsync();
             Assert.False(isOpen);
         });
     }
@@ -80,20 +85,26 @@ public class BurgerMenuTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "BurgerMenu")]
     public async Task ClickLogout_LogsOutUser()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+
         await AllureApi.Step("Login and open menu", async () =>
         {
-            await LoginAsync();
-            await _burgerMenuPage.OpenMenuAsync();
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
+            await burgerMenuPage.OpenMenuAsync();
         });
 
         await AllureApi.Step("Click logout", async () =>
         {
-            await _burgerMenuPage.ClickLogoutAsync();
+            await burgerMenuPage.ClickLogoutAsync();
         });
 
         AllureApi.Step("Verify redirected to login page", () =>
         {
-            Assert.Equal("https://www.saucedemo.com/", _page.Url);
+            Assert.Equal("https://www.saucedemo.com/", page.Url);
         });
     }
 
@@ -104,21 +115,30 @@ public class BurgerMenuTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "BurgerMenu")]
     public async Task LogoutAsync_PerformsFullLogout()
     {
-        await AllureApi.Step("Login to application", async () => await LoginAsync());
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+
+        await AllureApi.Step("Login to application", async () =>
+        {
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
+        });
 
         await AllureApi.Step("Logout using LogoutAsync", async () =>
         {
-            await _burgerMenuPage.LogoutAsync();
+            await burgerMenuPage.LogoutAsync();
         });
 
         AllureApi.Step("Verify redirected to login page", () =>
         {
-            Assert.Equal("https://www.saucedemo.com/", _page.Url);
+            Assert.Equal("https://www.saucedemo.com/", page.Url);
         });
 
         await AllureApi.Step("Verify login button is visible", async () =>
         {
-            await Assertions.Expect(_page.Locator("[data-test='login-button']")).ToBeVisibleAsync();
+            await Assertions.Expect(page.Locator("[data-test='login-button']")).ToBeVisibleAsync();
         });
     }
 
@@ -129,21 +149,27 @@ public class BurgerMenuTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "BurgerMenu")]
     public async Task ClickAllItems_NavigatesToInventory()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+
         await AllureApi.Step("Login and navigate to cart", async () =>
         {
-            await LoginAsync();
-            await _page.ClickAsync(".shopping_cart_link");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
+            await page.ClickAsync(".shopping_cart_link");
         });
 
         await AllureApi.Step("Open menu and click All Items", async () =>
         {
-            await _burgerMenuPage.OpenMenuAsync();
-            await _burgerMenuPage.ClickAllItemsAsync();
+            await burgerMenuPage.OpenMenuAsync();
+            await burgerMenuPage.ClickAllItemsAsync();
         });
 
         AllureApi.Step("Verify returned to inventory page", () =>
         {
-            Assert.Equal("https://www.saucedemo.com/inventory.html", _page.Url);
+            Assert.Equal("https://www.saucedemo.com/inventory.html", page.Url);
         });
     }
 
@@ -154,26 +180,32 @@ public class BurgerMenuTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "BurgerMenu")]
     public async Task ClickResetApp_ResetsAppState()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+
         await AllureApi.Step("Login and add items to cart", async () =>
         {
-            await LoginAsync();
-            await _page.ClickAsync("[data-test='add-to-cart-sauce-labs-backpack']");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
+            await page.ClickAsync("[data-test='add-to-cart-sauce-labs-backpack']");
         });
 
         await AllureApi.Step("Open menu and reset app", async () =>
         {
-            await _burgerMenuPage.OpenMenuAsync();
-            await _burgerMenuPage.ClickResetAppAsync();
+            await burgerMenuPage.OpenMenuAsync();
+            await burgerMenuPage.ClickResetAppAsync();
         });
 
         await AllureApi.Step("Close menu", async () =>
         {
-            await _burgerMenuPage.CloseMenuAsync();
+            await burgerMenuPage.CloseMenuAsync();
         });
 
         await AllureApi.Step("Verify cart is reset", async () =>
         {
-            var badgeVisible = await _page.IsVisibleAsync(".shopping_cart_badge");
+            var badgeVisible = await page.IsVisibleAsync(".shopping_cart_badge");
             Assert.False(badgeVisible);
         });
     }
@@ -185,16 +217,22 @@ public class BurgerMenuTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "BurgerMenu")]
     public async Task IsLogoutLinkVisible_ReturnsTrueWhenMenuOpen()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+
         await AllureApi.Step("Login and open menu", async () =>
         {
-            await LoginAsync();
-            await _burgerMenuPage.OpenMenuAsync();
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
+            await burgerMenuPage.OpenMenuAsync();
         });
 
         bool isVisible = false;
         await AllureApi.Step("Check if logout link is visible", async () =>
         {
-            isVisible = await _burgerMenuPage.IsLogoutLinkVisibleAsync();
+            isVisible = await burgerMenuPage.IsLogoutLinkVisibleAsync();
         });
 
         AllureApi.Step("Verify logout link is visible", () =>

@@ -10,15 +10,11 @@ namespace csharp_framework_demo.Tests;
 [AllureFeature("Inventory Page Object")]
 public class InventoryTests : IClassFixture<PlaywrightFixture>
 {
-    private readonly IPage _page;
-    private readonly LoginPage _loginPage;
-    private readonly InventoryPage _inventoryPage;
+    private readonly PlaywrightFixture _fixture;
 
     public InventoryTests(PlaywrightFixture fixture)
     {
-        _page = fixture.Page;
-        _loginPage = new LoginPage(_page);
-        _inventoryPage = new InventoryPage(_page);
+        _fixture = fixture;
     }
 
     [Fact]
@@ -28,20 +24,29 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "Inventory")]
     public async Task GetProductCount_ReturnsCorrectNumber()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var inventoryPage = new InventoryPage(page);
+        var cartPage = new CartPage(page);
+        var checkoutPage = new CheckoutPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+        var productDetailsPage = new ProductDetailsPage(page);
+
         await AllureApi.Step("Navigate to SauceDemo login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         int count = 0;
         await AllureApi.Step("Get product count", async () =>
         {
-            count = await _inventoryPage.GetProductCountAsync();
+            count = await inventoryPage.GetProductCountAsync();
         });
 
         AllureApi.Step("Verify product count is 6", () =>
@@ -57,20 +62,29 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "Inventory")]
     public async Task GetProductNames_ReturnsAllNames()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var inventoryPage = new InventoryPage(page);
+        var cartPage = new CartPage(page);
+        var checkoutPage = new CheckoutPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+        var productDetailsPage = new ProductDetailsPage(page);
+
         await AllureApi.Step("Navigate to SauceDemo login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         List<string> names = null!;
         await AllureApi.Step("Get product names", async () =>
         {
-            names = await _inventoryPage.GetProductNamesAsync();
+            names = await inventoryPage.GetProductNamesAsync();
         });
 
         AllureApi.Step("Verify all 6 product names are returned", () =>
@@ -88,25 +102,34 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "Cart")]
     public async Task AddToCart_UpdatesBadgeCount()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var inventoryPage = new InventoryPage(page);
+        var cartPage = new CartPage(page);
+        var checkoutPage = new CheckoutPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+        var productDetailsPage = new ProductDetailsPage(page);
+
         await AllureApi.Step("Navigate to SauceDemo login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         await AllureApi.Step("Add product to cart", async () =>
         {
-            await _inventoryPage.AddToCartAsync("sauce-labs-backpack");
+            await inventoryPage.AddToCartAsync("sauce-labs-backpack");
         });
 
         int cartCount = 0;
         await AllureApi.Step("Get cart item count", async () =>
         {
-            cartCount = await _inventoryPage.GetCartItemCountAsync();
+            cartCount = await inventoryPage.GetCartItemCountAsync();
         });
 
         AllureApi.Step("Verify cart badge shows 1", () =>
@@ -116,7 +139,7 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
 
         await AllureApi.Step("Verify button changed to Remove", async () =>
         {
-            var isInCart = await _inventoryPage.IsProductInCartAsync("sauce-labs-backpack");
+            var isInCart = await inventoryPage.IsProductInCartAsync("sauce-labs-backpack");
             Assert.True(isInCart);
         });
     }
@@ -128,30 +151,39 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "Cart")]
     public async Task RemoveFromCart_UpdatesBadgeCount()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var inventoryPage = new InventoryPage(page);
+        var cartPage = new CartPage(page);
+        var checkoutPage = new CheckoutPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+        var productDetailsPage = new ProductDetailsPage(page);
+
         await AllureApi.Step("Navigate to SauceDemo login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         await AllureApi.Step("Add product to cart", async () =>
         {
-            await _inventoryPage.AddToCartAsync("sauce-labs-backpack");
+            await inventoryPage.AddToCartAsync("sauce-labs-backpack");
         });
 
         await AllureApi.Step("Remove product from cart", async () =>
         {
-            await _inventoryPage.RemoveFromCartAsync("sauce-labs-backpack");
+            await inventoryPage.RemoveFromCartAsync("sauce-labs-backpack");
         });
 
         int cartCount = 0;
         await AllureApi.Step("Get cart item count", async () =>
         {
-            cartCount = await _inventoryPage.GetCartItemCountAsync();
+            cartCount = await inventoryPage.GetCartItemCountAsync();
         });
 
         AllureApi.Step("Verify cart badge is 0", () =>
@@ -161,7 +193,7 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
 
         await AllureApi.Step("Verify button changed back to Add to Cart", async () =>
         {
-            var isInCart = await _inventoryPage.IsProductInCartAsync("sauce-labs-backpack");
+            var isInCart = await inventoryPage.IsProductInCartAsync("sauce-labs-backpack");
             Assert.False(isInCart);
         });
     }
@@ -173,24 +205,33 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "Navigation")]
     public async Task ClickProduct_NavigatesToDetails()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var inventoryPage = new InventoryPage(page);
+        var cartPage = new CartPage(page);
+        var checkoutPage = new CheckoutPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+        var productDetailsPage = new ProductDetailsPage(page);
+
         await AllureApi.Step("Navigate to SauceDemo login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         await AllureApi.Step("Click product name", async () =>
         {
-            await _inventoryPage.ClickProductAsync("Sauce Labs Backpack");
+            await inventoryPage.ClickProductAsync("Sauce Labs Backpack");
         });
 
         AllureApi.Step("Verify URL contains inventory-item.html", () =>
         {
-            Assert.Contains("inventory-item.html?id=", _page.Url);
+            Assert.Contains("inventory-item.html?id=", page.Url);
         });
     }
 
@@ -201,24 +242,33 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "Navigation")]
     public async Task NavigateToCart_OpensCartPage()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var inventoryPage = new InventoryPage(page);
+        var cartPage = new CartPage(page);
+        var checkoutPage = new CheckoutPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+        var productDetailsPage = new ProductDetailsPage(page);
+
         await AllureApi.Step("Navigate to SauceDemo login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         await AllureApi.Step("Navigate to cart", async () =>
         {
-            await _inventoryPage.NavigateToCartAsync();
+            await inventoryPage.NavigateToCartAsync();
         });
 
         AllureApi.Step("Verify URL is cart page", () =>
         {
-            Assert.Equal("https://www.saucedemo.com/cart.html", _page.Url);
+            Assert.Equal("https://www.saucedemo.com/cart.html", page.Url);
         });
     }
 
@@ -229,31 +279,40 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "Sorting")]
     public async Task SortProducts_ChangesDisplayOrder()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var inventoryPage = new InventoryPage(page);
+        var cartPage = new CartPage(page);
+        var checkoutPage = new CheckoutPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+        var productDetailsPage = new ProductDetailsPage(page);
+
         await AllureApi.Step("Navigate to SauceDemo login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         List<string> initialNames = null!;
         await AllureApi.Step("Get initial product order", async () =>
         {
-            initialNames = await _inventoryPage.GetProductNamesAsync();
+            initialNames = await inventoryPage.GetProductNamesAsync();
         });
 
         await AllureApi.Step("Sort products by price low to high", async () =>
         {
-            await _inventoryPage.SortProductsAsync("lohi");
+            await inventoryPage.SortProductsAsync("lohi");
         });
 
         List<string> sortedNames = null!;
         await AllureApi.Step("Get sorted product order", async () =>
         {
-            sortedNames = await _inventoryPage.GetProductNamesAsync();
+            sortedNames = await inventoryPage.GetProductNamesAsync();
         });
 
         AllureApi.Step("Verify products are reordered", () =>
@@ -269,20 +328,29 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Integration", "Cart")]
     public async Task IsProductInCart_ReturnsTrueAfterAdding()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+        var inventoryPage = new InventoryPage(page);
+        var cartPage = new CartPage(page);
+        var checkoutPage = new CheckoutPage(page);
+        var burgerMenuPage = new BurgerMenuPage(page);
+        var productDetailsPage = new ProductDetailsPage(page);
+
         await AllureApi.Step("Navigate to SauceDemo login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         bool beforeAdding = false;
         await AllureApi.Step("Check if product is in cart before adding", async () =>
         {
-            beforeAdding = await _inventoryPage.IsProductInCartAsync("sauce-labs-backpack");
+            beforeAdding = await inventoryPage.IsProductInCartAsync("sauce-labs-backpack");
         });
 
         AllureApi.Step("Verify product is not in cart initially", () =>
@@ -292,13 +360,13 @@ public class InventoryTests : IClassFixture<PlaywrightFixture>
 
         await AllureApi.Step("Add product to cart", async () =>
         {
-            await _inventoryPage.AddToCartAsync("sauce-labs-backpack");
+            await inventoryPage.AddToCartAsync("sauce-labs-backpack");
         });
 
         bool afterAdding = false;
         await AllureApi.Step("Check if product is in cart after adding", async () =>
         {
-            afterAdding = await _inventoryPage.IsProductInCartAsync("sauce-labs-backpack");
+            afterAdding = await inventoryPage.IsProductInCartAsync("sauce-labs-backpack");
         });
 
         AllureApi.Step("Verify product is in cart after adding", () =>

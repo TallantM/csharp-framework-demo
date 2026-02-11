@@ -10,13 +10,11 @@ namespace csharp_framework_demo.Tests;
 [AllureFeature("Authentication")]
 public class UserWorkflowTests : IClassFixture<PlaywrightFixture>
 {
-    private readonly IPage _page;
-    private readonly LoginPage _loginPage;
+    private readonly PlaywrightFixture _fixture;
 
     public UserWorkflowTests(PlaywrightFixture fixture)
     {
-        _page = fixture.Page;
-        _loginPage = new LoginPage(_page);
+        _fixture = fixture;
     }
 
     [Fact]
@@ -26,19 +24,23 @@ public class UserWorkflowTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Smoke", "Login")]
     public async Task SuccessfulLogin()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+
         await AllureApi.Step("Navigate to login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Enter valid credentials and login", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         await AllureApi.Step("Verify inventory list is visible", async () =>
         {
-            var inventoryVisible = await _page.IsVisibleAsync(".inventory_list");
+            var inventoryVisible = await page.IsVisibleAsync(".inventory_list");
             Assert.True(inventoryVisible);
         });
     }
@@ -50,24 +52,28 @@ public class UserWorkflowTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Smoke", "Navigation")]
     public async Task NavigateToInventoryAfterSuccessfulLogin()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+
         await AllureApi.Step("Navigate to login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         await AllureApi.Step("Verify URL redirects to inventory page", async () =>
         {
-            await Assertions.Expect(_page).ToHaveURLAsync("https://www.saucedemo.com/inventory.html");
+            await Assertions.Expect(page).ToHaveURLAsync("https://www.saucedemo.com/inventory.html");
         });
 
         await AllureApi.Step("Verify inventory container is visible", async () =>
         {
-            var inventoryContainer = _page.Locator(".inventory_container");
+            var inventoryContainer = page.Locator(".inventory_container");
             await Assertions.Expect(inventoryContainer).ToBeVisibleAsync();
         });
     }
@@ -79,34 +85,38 @@ public class UserWorkflowTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Regression", "Logout")]
     public async Task LogoutAfterSuccessfulLogin()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+
         await AllureApi.Step("Navigate to login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Login with valid credentials", async () =>
         {
-            await _loginPage.LoginAsync("standard_user", "secret_sauce");
+            await loginPage.LoginAsync("standard_user", "secret_sauce");
         });
 
         await AllureApi.Step("Open burger menu", async () =>
         {
-            await _page.ClickAsync("#react-burger-menu-btn");
+            await page.ClickAsync("#react-burger-menu-btn");
         });
 
         await AllureApi.Step("Click logout link", async () =>
         {
-            await _page.ClickAsync("#logout_sidebar_link");
+            await page.ClickAsync("#logout_sidebar_link");
         });
 
         await AllureApi.Step("Verify redirected to login page", async () =>
         {
-            await Assertions.Expect(_page).ToHaveURLAsync("https://www.saucedemo.com/");
+            await Assertions.Expect(page).ToHaveURLAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Verify login button is visible", async () =>
         {
-            var loginButton = _page.Locator("[data-test='login-button']");
+            var loginButton = page.Locator("[data-test='login-button']");
             await Assertions.Expect(loginButton).ToBeVisibleAsync();
         });
     }
@@ -118,19 +128,23 @@ public class UserWorkflowTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Smoke", "Validation", "Negative")]
     public async Task FailedLogin_InvalidCredentials()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+
         await AllureApi.Step("Navigate to login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Attempt login with invalid credentials", async () =>
         {
-            await _loginPage.LoginAsync("invalid_user", "wrong_password");
+            await loginPage.LoginAsync("invalid_user", "wrong_password");
         });
 
         await AllureApi.Step("Verify error message is displayed", async () =>
         {
-            var errorMessage = await _page.TextContentAsync("[data-test='error']");
+            var errorMessage = await page.TextContentAsync("[data-test='error']");
             Assert.Equal("Epic sadface: Username and password do not match any user in this service", errorMessage);
         });
     }
@@ -142,19 +156,23 @@ public class UserWorkflowTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Regression", "Validation", "Negative")]
     public async Task FailedLogin_EmptyCredentials()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+
         await AllureApi.Step("Navigate to login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Click login button without entering credentials", async () =>
         {
-            await _page.ClickAsync("[data-test='login-button']");
+            await page.ClickAsync("[data-test='login-button']");
         });
 
         await AllureApi.Step("Verify username required error is displayed", async () =>
         {
-            var errorMessage = await _page.TextContentAsync("[data-test='error']");
+            var errorMessage = await page.TextContentAsync("[data-test='error']");
             Assert.Equal("Epic sadface: Username is required", errorMessage);
         });
     }
@@ -166,19 +184,23 @@ public class UserWorkflowTests : IClassFixture<PlaywrightFixture>
     [AllureTag("Smoke", "Validation", "Negative")]
     public async Task FailedLogin_LockedUser()
     {
+        await using var pageContext = await _fixture.CreatePageContextAsync();
+        var page = pageContext.Page;
+        var loginPage = new LoginPage(page);
+
         await AllureApi.Step("Navigate to login page", async () =>
         {
-            await _loginPage.NavigateToAsync("https://www.saucedemo.com/");
+            await loginPage.NavigateToAsync("https://www.saucedemo.com/");
         });
 
         await AllureApi.Step("Attempt login with locked out user", async () =>
         {
-            await _loginPage.LoginAsync("locked_out_user", "secret_sauce");
+            await loginPage.LoginAsync("locked_out_user", "secret_sauce");
         });
 
         await AllureApi.Step("Verify locked out error message is displayed", async () =>
         {
-            var errorMessage = await _page.TextContentAsync("[data-test='error']");
+            var errorMessage = await page.TextContentAsync("[data-test='error']");
             Assert.Equal("Epic sadface: Sorry, this user has been locked out.", errorMessage);
         });
     }
@@ -186,20 +208,42 @@ public class UserWorkflowTests : IClassFixture<PlaywrightFixture>
 
 public class PlaywrightFixture : IAsyncLifetime
 {
-    public IPlaywright Playwright { get; private set; } = null!;
+    private IPlaywright _playwright = null!;
     public IBrowser Browser { get; private set; } = null!;
-    public IPage Page { get; private set; } = null!;
 
     public async Task InitializeAsync()
     {
-        Playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-        Browser = await Playwright.Chromium.LaunchAsync(new() { Headless = true });
-        Page = await Browser.NewPageAsync();
+        _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
+        Browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true });
+    }
+
+    public async Task<PageContext> CreatePageContextAsync()
+    {
+        var context = await Browser.NewContextAsync();
+        var page = await context.NewPageAsync();
+        return new PageContext(context, page);
     }
 
     public async Task DisposeAsync()
     {
         await Browser.CloseAsync();
-        Playwright.Dispose();
+        _playwright.Dispose();
+    }
+}
+
+public class PageContext : IAsyncDisposable
+{
+    private readonly IBrowserContext _context;
+    public IPage Page { get; }
+
+    public PageContext(IBrowserContext context, IPage page)
+    {
+        _context = context;
+        Page = page;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.CloseAsync();
     }
 }
