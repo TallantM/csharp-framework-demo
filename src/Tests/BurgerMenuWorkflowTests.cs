@@ -66,7 +66,6 @@ public class BurgerMenuWorkflowTests : IClassFixture<PlaywrightFixture>
 
         await AllureApi.Step("Verify menu is closed", async () =>
         {
-            await Task.Delay(500);
             var isOpen = await _burgerMenuPage.IsMenuOpenAsync();
             Assert.False(isOpen);
         });

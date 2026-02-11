@@ -16,6 +16,6 @@ public class LoginPage
         await _page.FillAsync("[data-test='username']", username);
         await _page.FillAsync("[data-test='password']", password);
         await _page.ClickAsync("[data-test='login-button']");
-        await _page.WaitForURLAsync("**/inventory.html");
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 }

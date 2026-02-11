@@ -19,6 +19,7 @@ public class BurgerMenuPage
     public async Task CloseMenuAsync()
     {
         await _page.ClickAsync("#react-burger-cross-btn");
+        await _page.WaitForSelectorAsync("#react-burger-cross-btn", new() { State = WaitForSelectorState.Hidden });
     }
 
     public async Task<bool> IsMenuOpenAsync()
