@@ -63,7 +63,7 @@ public class BurgerMenuPageTests
         var mockPage = new Mock<IPage>();
         var mockLocator = new Mock<ILocator>();
         mockLocator.Setup(l => l.IsVisibleAsync(null)).ReturnsAsync(true);
-        mockPage.Setup(p => p.Locator(".bm-menu", null)).Returns(mockLocator.Object);
+        mockPage.Setup(p => p.Locator("#react-burger-cross-btn", null)).Returns(mockLocator.Object);
         var burgerMenuPage = new BurgerMenuPage(mockPage.Object);
 
         bool isOpen = false;

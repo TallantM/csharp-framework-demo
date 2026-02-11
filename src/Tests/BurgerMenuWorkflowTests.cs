@@ -196,6 +196,7 @@ public class BurgerMenuWorkflowTests : IClassFixture<PlaywrightFixture>
             await burgerMenuPage.OpenMenuAsync();
             await burgerMenuPage.ClickResetAppAsync();
             await burgerMenuPage.CloseMenuAsync();
+            await page.ReloadAsync();
         });
 
         await AllureApi.Step("Verify cart is empty", async () =>
@@ -253,6 +254,7 @@ public class BurgerMenuWorkflowTests : IClassFixture<PlaywrightFixture>
 
         await AllureApi.Step("Navigate to product details and verify menu accessible", async () =>
         {
+            await burgerMenuPage.OpenMenuAsync();
             await burgerMenuPage.ClickAllItemsAsync();
             await inventoryPage.ClickProductAsync("Sauce Labs Backpack");
             await burgerMenuPage.OpenMenuAsync();
