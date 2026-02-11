@@ -23,8 +23,8 @@ public class BurgerMenuPage
 
     public async Task<bool> IsMenuOpenAsync()
     {
-        var menu = _page.Locator(".bm-menu");
-        return await menu.IsVisibleAsync();
+        var closeButton = _page.Locator("#react-burger-cross-btn");
+        return await closeButton.IsVisibleAsync();
     }
 
     public async Task ClickAllItemsAsync()
