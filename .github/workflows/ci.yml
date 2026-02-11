@@ -6,16 +6,8 @@ on:
   pull_request:
     branches: [ main ]
 
-# Allow only one concurrent deployment
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
-# Sets permissions for GitHub Pages deployment
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
   test:
@@ -81,7 +73,6 @@ jobs:
         path: allure-report
         retention-days: 30
 
-    # Upload artifact for GitHub Pages
     - name: Run Conformance Tests
       if: always()
       run: |
@@ -89,23 +80,26 @@ jobs:
           --filter "FullyQualifiedName~SpecConformanceTests" \
           --logger "console;verbosity=detailed"
 
-    - name: Upload Pages Artifact
-      if: always() && github.ref == 'refs/heads/main' && github.run_attempt == 1
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: allure-report
+    # Upload Pages Artifact - DISABLED (GitHub Pages not enabled for private repo)
+    # - name: Upload Pages Artifact
+    #   if: always() && github.ref == 'refs/heads/main' && github.run_attempt == 1
+    #   uses: actions/upload-pages-artifact@v3
+    #   with:
+    #     path: allure-report
 
   # Deploy to GitHub Pages (only on main branch)
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: test
-    runs-on: ubuntu-latest
-    
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    
-    steps:
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+  # DISABLED: GitHub Pages requires GitHub Pro/Team/Enterprise for private repos
+  # To enable: Go to repo Settings > Pages > Source: GitHub Actions
+  # deploy:
+  #   if: github.ref == 'refs/heads/main'
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #
+  #   steps:
+  #   - name: Deploy to GitHub Pages
+  #     id: deployment
+  #     uses: actions/deploy-pages@v4
